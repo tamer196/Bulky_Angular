@@ -1,4 +1,8 @@
-using BulkyWeb.Data;
+using BulkyBook.DataAccess.Repositiry;
+using BulkyBook.DataAccess.Repositiry.IRepository;
+using BulkyBooks.DataAcces.Data;
+using BulkyBooks.DataAccess.Repositiry;
+using BulkyBooks.DataAccess.Repositiry.IRepository;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,13 +17,16 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
+
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(builder =>
-                          builder.WithOrigins("*")
-                                 .AllowAnyMethod()
-                                 .AllowAnyHeader());
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader());
 });
+
 
 var app = builder.Build();
 
@@ -33,7 +40,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
-
+app.UseCors();
 app.MapControllers();
 
 app.Run();
