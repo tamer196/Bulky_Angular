@@ -10,7 +10,9 @@ namespace BulkyBook.DataAccess.Repositiry.IRepository
     public interface IUnitOfWork
     {
         ICategoryRepository category {  get; }
+        IProductRepository product {  get; }
 
+        void Detach(object entity);
         void Save();
     }
 }

@@ -19,6 +19,7 @@ namespace BulkyBooks.DataAccess.Repositiry
         {
             _db = db;
             dbSet = _db.Set<T>();
+            _db.Product.Include(u => u.Category).Include(u => u.Category.Id);
         }
 
         public void Add(T entity)
@@ -26,16 +27,30 @@ namespace BulkyBooks.DataAccess.Repositiry
             dbSet.Add(entity);
         }
 
-        public T Get(Expression<Func<T, bool>> filter)
+        public T Get(Expression<Func<T, bool>> filter, string? includeProperites = null)
         {
             IQueryable<T> query = dbSet;
             query = query.Where(filter);
+            if (!string.IsNullOrEmpty(includeProperites))
+            {
+                foreach (var includeProperity in includeProperites.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(includeProperity);
+                }
+            }
             return query.FirstOrDefault();
         }
 
-        public IEnumerable<T> GetAll()
+        public IEnumerable<T> GetAll(string? includeProperites = null)
         {
             IQueryable<T> query = dbSet;
+            if (!string.IsNullOrEmpty(includeProperites))
+            {
+                foreach(var includeProperity in includeProperites.Split(new char[] {','},StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(includeProperity);
+                }
+            }
             return query.ToList();
         }
 

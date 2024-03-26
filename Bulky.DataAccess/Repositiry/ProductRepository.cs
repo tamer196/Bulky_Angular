@@ -1,4 +1,5 @@
-﻿using BulkyBooks.DataAcces.Data;
+﻿using BulkyBook.Models;
+using BulkyBooks.DataAcces.Data;
 using BulkyBooks.DataAccess.Repositiry.IRepository;
 using BulkyBooks.Models;
 using System;
@@ -9,11 +10,11 @@ using System.Threading.Tasks;
 
 namespace BulkyBooks.DataAccess.Repositiry
 {
-    public class CategoryRepository : Repository<Category>, ICategoryRepository
+    public class ProductRepository : Repository<Product>, IProductRepository
     {
         private ApplicationDbContext _db;
 
-        public CategoryRepository(ApplicationDbContext db) : base(db)
+        public ProductRepository(ApplicationDbContext db) : base(db)
         {
             _db = db;
         }
@@ -23,9 +24,9 @@ namespace BulkyBooks.DataAccess.Repositiry
             _db.SaveChanges();
         }
 
-        public void Update(Category obj)
+        public void Update(Product obj)
         {
-            _db.Category.Update(obj);
+            _db.Product.Update(obj);
         }
     }
 }

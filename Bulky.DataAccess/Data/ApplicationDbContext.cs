@@ -1,4 +1,5 @@
-﻿using BulkyBooks.Models;
+﻿using BulkyBook.Models;
+using BulkyBooks.Models;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -12,6 +13,7 @@ namespace BulkyBooks.DataAcces.Data
         }
 
         public DbSet<Category> Category { get; set; }
+        public DbSet<Product> Product { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

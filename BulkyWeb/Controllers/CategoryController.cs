@@ -1,4 +1,5 @@
 ﻿using BulkyBook.DataAccess.Repositiry.IRepository;
+using BulkyBook.Models;
 using BulkyBooks.DataAcces.Data;
 using BulkyBooks.DataAccess.Repositiry.IRepository;
 using BulkyBooks.Models;
@@ -58,7 +59,20 @@ namespace BulkyBooksWeb.Controllers
                 if (category == null || string.IsNullOrEmpty(category.Name) || category.DisplayOrder <= 0)
                     return BadRequest("Invalid category data.");
 
-                // Attach the updated category
+                // Validate if the ID is not zero
+                if (category.Id == 0)
+                {
+                    return BadRequest("Product ID cannot be zero.");
+                }
+
+                // Check if the product exists
+                var existingCategory = _unitOfWork.category.Get(cat => cat.Id == category.Id);
+                if (existingCategory == null)
+                {
+                    return NotFound("Category not found.");
+                }
+
+                _unitOfWork.Detach(existingCategory);
                 _unitOfWork.category.Update(category);
                 _unitOfWork.Save();
 
