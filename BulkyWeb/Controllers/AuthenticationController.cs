@@ -30,6 +30,10 @@ namespace BulkyBookWeb.Controllers
         [HttpPost("Login", Name = "LoginUser")]
         public async Task<IActionResult> Login([FromBody] Login model)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var user = await _userManager.FindByNameAsync(model.Username);
             if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
             {
@@ -38,6 +42,7 @@ namespace BulkyBookWeb.Controllers
                 var authClaims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, user.UserName),
+                    new Claim("User ID", user.Id),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 };
 
@@ -61,22 +66,52 @@ namespace BulkyBookWeb.Controllers
         [HttpPost("Register", Name = "RegisterUser")]
         public async Task<IActionResult> Register([FromBody] Register model)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            
             var userExists = await _userManager.FindByNameAsync(model.Username);
             if (userExists != null)
                 return StatusCode(StatusCodes.Status500InternalServerError, new CustomResponse { Status = "Error", Message = "User already exists!" });
 
-            ApplicationUser user = new()
+            ApplicationUser user = new ApplicationUser();
+
+
+            if (model.CompanyId != null)
             {
-                Email = model.Email,
-                SecurityStamp = Guid.NewGuid().ToString(),
-                UserName = model.Username,
-                PhoneNumber = model.PhoneNumber,
-                Name = model.Name,
-                City = model.City,
-                StreetAddress = model.StreetAddress,
-                PostalCode = model.PostalCode,
-                State = model.State,
-            };
+                user = new()
+                {
+                    Email = model.Email,
+                    SecurityStamp = Guid.NewGuid().ToString(),
+                    UserName = model.Username,
+                    PhoneNumber = model.PhoneNumber,
+                    Name = model.Name,
+                    City = model.City,
+                    StreetAddress = model.StreetAddress,
+                    PostalCode = model.PostalCode,
+                    State = model.State,
+                    CompanyId = model.CompanyId
+                };
+            }
+            else
+            {
+                user = new()
+                {
+                    Email = model.Email,
+                    SecurityStamp = Guid.NewGuid().ToString(),
+                    UserName = model.Username,
+                    PhoneNumber = model.PhoneNumber,
+                    Name = model.Name,
+                    City = model.City,
+                    StreetAddress = model.StreetAddress,
+                    PostalCode = model.PostalCode,
+                    State = model.State
+                };
+            }
+
+            
 
             var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
@@ -102,6 +137,7 @@ namespace BulkyBookWeb.Controllers
             var authClaims = new List<Claim>
         {
             new Claim(ClaimTypes.Name, user.UserName),
+            new Claim("User ID", user.Id),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 

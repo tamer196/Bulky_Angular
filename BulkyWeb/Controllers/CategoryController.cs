@@ -3,11 +3,13 @@ using BulkyBook.Models;
 using BulkyBooks.DataAcces.Data;
 using BulkyBooks.DataAccess.Repositiry.IRepository;
 using BulkyBooks.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace BulkyBooksWeb.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CategoryController : ControllerBase

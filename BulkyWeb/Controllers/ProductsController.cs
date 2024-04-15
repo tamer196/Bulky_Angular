@@ -1,6 +1,7 @@
 ﻿using BulkyBook.DataAccess.Repositiry.IRepository;
 using BulkyBook.Models;
 using BulkyBooks.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,7 +22,7 @@ namespace BulkyBookWeb.Controllers
         {
             try
             {
-                var products = _unitOfWork.product.GetAll(includeProperites : "Category").ToList();
+                var products = _unitOfWork.product.GetAll(includeProperties : "Category").ToList();
                 return Ok(products);
             }
             catch (Exception ex)
@@ -30,6 +31,7 @@ namespace BulkyBookWeb.Controllers
             }
         }
 
+        [Authorize]
         [HttpPost("Create", Name = "CreateProduct")]
         public IActionResult Create([FromForm] Product product,IFormFile file)
         {
@@ -71,7 +73,7 @@ namespace BulkyBookWeb.Controllers
             }
         }
 
-
+        [Authorize]
         [HttpPost("Update", Name = "UpdateProduct")]
         public IActionResult Update([FromForm] Product product, IFormFile file)
         {
@@ -138,7 +140,7 @@ namespace BulkyBookWeb.Controllers
         }
 
 
-
+        [Authorize]
         [HttpDelete("Delete", Name = "DeleteProduct")]
         public IActionResult Delete(int id)
         {
